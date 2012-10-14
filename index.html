@@ -1,0 +1,60 @@
+<!DOCTYPE html><!-- -*- coding: utf-8 -*- -->
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no" />
+    <title>Zookeeper Training</title>
+    <style type="text/css">
+body
+{
+    margin: 0;
+    padding: 0;
+    width: 320px;
+    height: 480px;
+    font-family: monospace;
+}
+#canvas
+{
+    width: 320px;
+    height: 334px;
+}
+button {
+    margin: 20px 10px;
+}
+#counter, #fps {
+    text-align: right;
+    display: inline-block;
+    xbackground-color: #CCF;
+    padding: 4px;
+}
+#fps {
+    width: 3em;
+}
+#counter {
+    font-weight: bolder;
+    font-size: 150%;
+    color: #33C;
+    width: 2em;
+}
+    </style>
+    <script type="text/javascript" src="zookeeper.js"></script>
+    <script type="text/javascript">
+// <![CDATA[
+ZooKeeper.Controller.ready(function($) {
+    setTimeout(function() { window.scrollTo(0, 1); }, 0);
+    document.getElementById('hint').addEventListener('click', function()  { $.hint(); }, false);
+    document.getElementById('reset').addEventListener('click', function()  { $.reset(); }, false);
+});
+// ]]>
+    </script>
+  </head>
+  <body>
+    <div>
+      <button id="hint">Hint</button>
+      <button id="reset">Reset</button>
+      <span id="counter"></span>
+      <span>FPS:</span><span id="fps">N/A</span>
+    </div>
+    <canvas id="canvas"></canvas>
+  </body>
+</html>
