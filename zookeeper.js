@@ -6,7 +6,6 @@ ZooKeeper = window.ZooKeeper || {};
 
     // generated with pattern.py
     var patterns = [[[0, 1], [0, -2]], [[2, 0], [-1, 0]], [[1, 0], [-2, 0]], [[0, -1], [0, 2]], [[1, -1], [1, 1]], [[-1, 1], [-1, -1]], [[1, -1], [-1, -1]], [[-1, 1], [1, 1]], [[-1, 1], [-1, 2]], [[1, -1], [1, -2]], [[2, -1], [1, -1]], [[-1, -1], [-2, -1]], [[-1, -1], [-1, -2]], [[-2, 1], [-1, 1]], [[1, 1], [2, 1]], [[1, 2], [1, 1]], [[1, 0], [2, 1]], [[0, 1], [-1, 2]], [[1, 2], [0, 1]], [[1, 0], [2, -1]], [[-2, 1], [-1, 0]], [[-1, 0], [-2, -1]], [[0, -1], [1, -2]], [[0, -1], [-1, -2]]];
-    var numPatterns = patterns.length;
 
     var tanh = Math.tan(Math.PI * 30 / 180);
     var tanv = Math.tan(Math.PI * 60 / 180);
@@ -408,7 +407,7 @@ ZooKeeper = window.ZooKeeper || {};
         var getHint = function() {
             var hs = Array(mh * mw);
             walk(function(x, y) {
-                for (var a = 0; a < numPatterns; ++a) {
+                for (var a = 0, len = patterns.length; a < len; ++a) {
                     var p = board.get(x, y);
                     var n = p.n;
                     if (n <= 0 || p.action.status !== Status.NORMAL) {
