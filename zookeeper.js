@@ -21,10 +21,6 @@ ZooKeeper = window.ZooKeeper || {};
     var bh = 334; // 盤面の縦ピクセル数
     var ctx;
 
-    var mod = function(m, n) {
-        return m - n * Math.floor(m / n);
-    }
-
     var walk = function(f) {
         for (var n = 0, len = mw * mh; n < len; ++n) {
             if (f(n % mw, (n / mw)|0)) {
