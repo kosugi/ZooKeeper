@@ -8,6 +8,9 @@ ZooKeeper = window.ZooKeeper || {};
     var patterns = [[[0, 1], [0, -2]], [[2, 0], [-1, 0]], [[1, 0], [-2, 0]], [[0, -1], [0, 2]], [[1, -1], [1, 1]], [[-1, 1], [-1, -1]], [[1, -1], [-1, -1]], [[-1, 1], [1, 1]], [[-1, 1], [-1, 2]], [[1, -1], [1, -2]], [[2, -1], [1, -1]], [[-1, -1], [-2, -1]], [[-1, -1], [-1, -2]], [[-2, 1], [-1, 1]], [[1, 1], [2, 1]], [[1, 2], [1, 1]], [[1, 0], [2, 1]], [[0, 1], [-1, 2]], [[1, 2], [0, 1]], [[1, 0], [2, -1]], [[-2, 1], [-1, 0]], [[-1, 0], [-2, -1]], [[0, -1], [1, -2]], [[0, -1], [-1, -2]]];
     var numPatterns = patterns.length;
 
+    var tanh = Math.tan(Math.PI * 30 / 180);
+    var tanv = Math.tan(Math.PI * 60 / 180);
+
     var ready;
     var numKinds = 7;
     var mw = 8;
@@ -293,12 +296,55 @@ ZooKeeper = window.ZooKeeper || {};
         var spos;
 
         var incell = function(px, py) {
-            // TODO 微妙 (角度とか)
             var x = Math.floor(px / imgw);
             var y = Math.floor((py - ofs) / imgh);
             if (0 <= x && x < mw && 0 <= y && y < mh) {
-                return [x, y];
+                return [x, y, px - x * imgw, py - y * imgh];
             }
+        }
+
+        var incellTo = function(spos, px, py) {
+            var x = spos[0];
+            var y = spos[1];
+            px -= spos[2];
+            py -= spos[3];
+
+            // R
+            if (
+                (x + 1) * imgw < px &&
+                py > -tanh * (px - x * imgw) + y * imgh &&
+                py <  tanh * (px - x * imgw) + y * imgh)
+            {
+                return [x + 1, y];
+            }
+
+            // L
+            if (
+                (x - 1) * imgw > px &&
+                py >  tanh * (px - x * imgw) + y * imgh &&
+                py < -tanh * (px - x * imgw) + y * imgh)
+            {
+                return [x - 1, y];
+            }
+            
+            // D
+            if (
+                (y + 1) * imgh < py &&
+                px > -tanv * (py - y * imgh) + x * imgw &&
+                px <  tanv * (py - y * imgh) + x * imgw)
+            {
+                return [x, y + 1];
+            }
+
+            // U
+            if (
+                (y - 1) * imgh > py &&
+                px >  tanv * (py - y * imgh) + x * imgw &&
+                px < -tanv * (py - y * imgh) + x * imgw)
+            {
+                return [x, y - 1];
+            }
+            
         }
 
         var handleTouchEvent = function(e, f) {
@@ -336,7 +382,7 @@ ZooKeeper = window.ZooKeeper || {};
             if (spos) {
                 handleTouchEvent(e, function(e, px, py) {
                     console.log('e: (' + px + ', ' + py + ')');
-                    var epos = incell(e.pageX, e.pageY - offsetTop);
+                    var epos = incellTo(spos, px, py);
                     controller.pieceMoveEnd(spos, epos, px, py);
                 });
             }
