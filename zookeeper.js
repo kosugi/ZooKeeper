@@ -15,7 +15,6 @@ ZooKeeper = window.ZooKeeper || {};
     var mw = 8;
     var mh = 8;
     var imgw = 40;
-    var imgh = 40;
     var ofs = 8;
     var offsetTop;
     var bh = 334; // 盤面の縦ピクセル数
@@ -92,7 +91,7 @@ ZooKeeper = window.ZooKeeper || {};
         status: Status.NORMAL,
         work: function(p) {},
         draw: function(p, x, y) {
-            draw(p.n, x * imgw, y * imgh);
+            draw(p.n, x * imgw, y * imgw);
         }
     }
 
@@ -113,7 +112,7 @@ ZooKeeper = window.ZooKeeper || {};
         },
         draw: function(p, x, y) {}, // 順序通りに描画してしまうと移動中の駒が背後に隠れてしまう場合があるのでここでは描画しない
         drawOnTop: function(p, x, y) {
-            draw(p.n, x * imgw + this.ex + this.fx, y * imgh + this.ey + this.fy);
+            draw(p.n, x * imgw + this.ex + this.fx, y * imgw + this.ey + this.fy);
         }
     }
 
@@ -155,7 +154,7 @@ ZooKeeper = window.ZooKeeper || {};
         },
         draw: function(p, x, y) {
             if ((this.count >> 2) & 1) {
-                draw(p.n, x * imgw, y * imgh);
+                draw(p.n, x * imgw, y * imgw);
             }
         }
     }
@@ -171,7 +170,7 @@ ZooKeeper = window.ZooKeeper || {};
             }
         },
         draw: function(p, x, y) {
-            draw(p.n, x * imgw, y * imgh - imgh * this.count / this.duration);
+            draw(p.n, x * imgw, y * imgw - imgw * this.count / this.duration);
         }
     }
 
@@ -292,9 +291,9 @@ ZooKeeper = window.ZooKeeper || {};
 
         var incell = function(px, py) {
             var x = Math.floor(px / imgw);
-            var y = Math.floor((py - ofs) / imgh);
+            var y = Math.floor((py - ofs) / imgw);
             if (0 <= x && x < mw && 0 <= y && y < mh) {
-                return [x, y, px - x * imgw, py - y * imgh];
+                return [x, y, px - x * imgw, py - y * imgw];
             }
         }
 
@@ -307,8 +306,8 @@ ZooKeeper = window.ZooKeeper || {};
             // R
             if (
                 (x + 1) * imgw < px &&
-                py > -tanh * (px - x * imgw) + y * imgh &&
-                py <  tanh * (px - x * imgw) + y * imgh)
+                py > -tanh * (px - x * imgw) + y * imgw &&
+                py <  tanh * (px - x * imgw) + y * imgw)
             {
                 return [x + 1, y];
             }
@@ -316,26 +315,26 @@ ZooKeeper = window.ZooKeeper || {};
             // L
             if (
                 (x - 1) * imgw > px &&
-                py >  tanh * (px - x * imgw) + y * imgh &&
-                py < -tanh * (px - x * imgw) + y * imgh)
+                py >  tanh * (px - x * imgw) + y * imgw &&
+                py < -tanh * (px - x * imgw) + y * imgw)
             {
                 return [x - 1, y];
             }
             
             // D
             if (
-                (y + 1) * imgh < py &&
-                px > -tanv * (py - y * imgh) + x * imgw &&
-                px <  tanv * (py - y * imgh) + x * imgw)
+                (y + 1) * imgw < py &&
+                px > -tanv * (py - y * imgw) + x * imgw &&
+                px <  tanv * (py - y * imgw) + x * imgw)
             {
                 return [x, y + 1];
             }
 
             // U
             if (
-                (y - 1) * imgh > py &&
-                px >  tanv * (py - y * imgh) + x * imgw &&
-                px < -tanv * (py - y * imgh) + x * imgw)
+                (y - 1) * imgw > py &&
+                px >  tanv * (py - y * imgw) + x * imgw &&
+                px < -tanv * (py - y * imgw) + x * imgw)
             {
                 return [x, y - 1];
             }
@@ -504,7 +503,7 @@ ZooKeeper = window.ZooKeeper || {};
         this.pieceMoveEnd = function(spos, epos, px, py) {
             if (moving) {
                 var cx = mx * imgw + moving.action.fx;
-                var cy = my * imgh + moving.action.fy;
+                var cy = my * imgw + moving.action.fy;
 
                 if (
                     spos && epos &&
@@ -537,7 +536,7 @@ ZooKeeper = window.ZooKeeper || {};
 
                         console.log('slided (' + x1 + ', ' + y1 + ') - (' + dx + ', ' + dy + ')');
                         p1.fix(cx, cy, x2, y2);
-                        p2.fix(x2 * imgw, y2 * imgh, x1, y1);
+                        p2.fix(x2 * imgw, y2 * imgw, x1, y1);
                         moving = void 0;
                         return;
                     }
@@ -621,7 +620,7 @@ ZooKeeper = window.ZooKeeper || {};
                     var y = (n / mw)|0;
                     var x = n % mw;
                     if (hs[y * mw + x]) {
-                        ctx.strokeRect(x * imgw + 3, y * imgh + 3 + ofs, imgw - 6, imgh - 6);
+                        ctx.strokeRect(x * imgw + 3, y * imgw + 3 + ofs, imgw - 6, imgw - 6);
                     }
                 }
             }
