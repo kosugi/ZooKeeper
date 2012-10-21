@@ -300,45 +300,25 @@ ZooKeeper = window.ZooKeeper || {};
         var incellTo = function(spos, px, py) {
             var x = spos[0];
             var y = spos[1];
-            px -= spos[2];
-            py -= spos[3];
+            var dx = (px - spos[2]) - (x * imgw);
+            var dy = (py - spos[3]) - (y * imgw);
+            var r = Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2));
+            var threshold = imgw * 0.8;
 
-            // R
-            if (
-                (x + 1) * imgw < px &&
-                py > -tanh * (px - x * imgw) + y * imgw &&
-                py <  tanh * (px - x * imgw) + y * imgw)
-            {
-                return [x + 1, y];
+            if (r < threshold) {
+                return;
             }
 
-            // L
-            if (
-                (x - 1) * imgw > px &&
-                py >  tanh * (px - x * imgw) + y * imgw &&
-                py < -tanh * (px - x * imgw) + y * imgw)
-            {
-                return [x - 1, y];
-            }
-            
-            // D
-            if (
-                (y + 1) * imgw < py &&
-                px > -tanv * (py - y * imgw) + x * imgw &&
-                px <  tanv * (py - y * imgw) + x * imgw)
-            {
-                return [x, y + 1];
+            var deg = 180 * Math.acos(dx / r) / Math.PI;
+            if (dy < 0) deg = -deg + 360;
+            deg = ((deg + 30) % 360);
+
+            if (60 < (deg % 90)) {
+                return;
             }
 
-            // U
-            if (
-                (y - 1) * imgw > py &&
-                px >  tanv * (py - y * imgw) + x * imgw &&
-                px < -tanv * (py - y * imgw) + x * imgw)
-            {
-                return [x, y - 1];
-            }
-            
+            var offset = [[1, 0], [0, 1], [-1, 0], [0, -1]][(deg / 90)|0];
+            return [x + offset[0], y + offset[1]];
         }
 
         var handleTouchEvent = function(e, f) {
@@ -367,6 +347,18 @@ ZooKeeper = window.ZooKeeper || {};
         this.onTouchMove = function(e) {
             if (spos) {
                 handleTouchEvent(e, function(e, px, py) {
+                    var qx = spos[0] * imgw;
+                    var qy = spos[1] * imgw;
+                    var dx = (px - spos[2]) - qx;
+                    var dy = (py - spos[3]) - qy;
+                    var r = Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2));
+                    var threshold = imgw * 1.2;
+                    if (threshold < r) {
+                        var rad = Math.acos(dx / r);
+                        if (dy < 0) rad = -rad;
+                        px = qx + threshold * Math.cos(rad) + spos[2];
+                        py = qy + threshold * Math.sin(rad) + spos[3];
+                    }
                     controller.pieceMove(px, py);
                 });
             }
@@ -379,6 +371,7 @@ ZooKeeper = window.ZooKeeper || {};
                     var epos = incellTo(spos, px, py);
                     controller.pieceMoveEnd(spos, epos, px, py);
                 });
+                spos = void 0;
             }
         }
     }
