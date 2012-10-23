@@ -72,7 +72,7 @@ ZooKeeper = window.ZooKeeper || {};
 
     var draw = function(n, x, y) {
         if (0 < n) {
-            ctx.drawImage(imgs[n], x, y + ofs);
+            ctx.drawImage(imgs[n], x, y + ofs, imgw, imgw);
         }
     }
 
